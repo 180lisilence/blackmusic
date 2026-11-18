@@ -7,8 +7,6 @@ import { getSongList } from '../api/MusicApi';
 import { COLOR_ACCENT, COLOR_SUB, COLOR_TEXT, COLOR_WEAK, SPACE_PAGE } from '../common/Theme';
 import { SectionHeader } from '../common/Widgets';
 import { gotoPlayer } from '../common/Nav';
-import { router } from '@kit.ArkUI';
-import { hilog } from '@kit.PerformanceAnalysisKit';
 
 @Component
 export struct MineView {
@@ -22,8 +20,7 @@ export struct MineView {
   @State menus: MineMenuType[] = [
     { name: '我的音乐', desc: '128 首本地歌曲', icon: $r('app.media.ic_note') },
     { name: '我收藏的歌单', desc: '12 个歌单', icon: $r('app.media.ic_star') },
-    { name: '最近播放', desc: '今天听过 8 首', icon: $r('app.media.ic_clock') },
-    { name: '服务器设置', desc: '填写接口地址并自检', icon: $r('app.media.ic_setting') }
+    { name: '最近播放', desc: '今天听过 8 首', icon: $r('app.media.ic_clock') }
   ];
 
   aboutToAppear(): void {
@@ -32,24 +29,8 @@ export struct MineView {
     });
   }
 
-  private openSettings(): void {
-    try {
-      router.pushUrl({ url: 'pages/Settings' });
-    } catch (err) {
-      hilog.error(0x0000, 'HeimaMusic', 'openSettings failed: %{public}s', JSON.stringify(err));
-    }
-  }
-
-  /** 菜单点击：服务器设置进入设置页；其余为演示入口（待接对应列表页） */
+  /** 菜单点击：其余为演示入口（待接对应列表页） */
   private openMenu(menu: MineMenuType): void {
-    if (menu.name === '服务器设置') {
-      try {
-        router.pushUrl({ url: 'pages/Settings' });
-      } catch (err) {
-        hilog.error(0x0000, 'HeimaMusic', 'openMenu pushUrl failed: %{public}s', JSON.stringify(err));
-      }
-      return;
-    }
   }
 
   @Builder
@@ -165,19 +146,6 @@ export struct MineView {
               .fontWeight(FontWeight.Bold)
               .fontColor(COLOR_TEXT)
             Blank()
-            Row() {
-              Image($r('app.media.ic_setting'))
-                .width(20)
-                .height(20)
-                .fillColor(COLOR_TEXT)
-            }
-            .width(36)
-            .height(36)
-            .alignItems(VerticalAlign.Center)
-            .justifyContent(FlexAlign.Center)
-            .onClick(() => {
-              this.openSettings();
-            })
           }
           .width('100%')
           .alignItems(VerticalAlign.Center)

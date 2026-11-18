@@ -1,8 +1,8 @@
-PASS  模块文件数量：19 个 .ets
+PASS  模块文件数量：17 个 .ets
 PASS  本地模块导入全部可解析
-PASS  app.media 引用 47 项，全部存在
-PASS  路由页面注册一致：['pages/Splash', 'pages/Index', 'pages/Player', 'pages/Settings']
-PASS  代码内跳转目标均已注册：['pages/Index', 'pages/Player', 'pages/Settings']
+PASS  app.media 引用 46 项，全部存在
+PASS  路由页面注册一致：['pages/Splash', 'pages/Index', 'pages/Player']
+PASS  代码内跳转目标均已注册：['pages/Index', 'pages/Player']
 PASS  versionName = 6.0.0
 PASS  versionCode = 6000000
 PASS  bundleName = com.heima.cloudmusic
@@ -11,9 +11,10 @@ PASS  targetAPIVersion = 60000020
 PASS  compileSdkVersion = 26.0.0.105
 PASS  deviceTypes = ['phone', 'tablet']
 PASS  mainElement = EntryAbility
-PASS  权限声明：['ohos.permission.INTERNET', 'ohos.permission.GET_NETWORK_INFO', 'ohos.permission.KEEP_BACKGROUND_RUNNING']
+PASS  纯本地无联网权限：['ohos.permission.KEEP_BACKGROUND_RUNNING']
+PASS  无网络状态读取权限：['ohos.permission.KEEP_BACKGROUND_RUNNING']
 PASS  HAP 内媒体资源 52 项，覆盖全部引用
-PASS  ArkTS 字节码：ets/modules.abc（244020 字节）
+PASS  ArkTS 字节码：ets/modules.abc（203984 字节）
 PASS  资源索引：resources.index
 PASS  图标/封面资源格式完整
 

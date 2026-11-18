@@ -1,7 +1,6 @@
 import { AbilityConstant, ConfigurationConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { display, window } from '@kit.ArkUI';
-import { loadBaseUrl } from '../common/AppConfig';
 
 const DOMAIN = 0x0000;
 const TAG = 'HeimaMusic';
@@ -9,9 +8,6 @@ const TAG = 'HeimaMusic';
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
     hilog.info(DOMAIN, TAG, '%{public}s', 'Ability onCreate');
-    loadBaseUrl(this.context).then((url: string) => {
-      hilog.info(DOMAIN, TAG, 'baseUrl=%{public}s', url);
-    });
   }
 
   onDestroy(): void {

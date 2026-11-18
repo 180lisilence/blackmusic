@@ -3,17 +3,14 @@
  * 结构：搜索区域 / 轮播图区域 / 每日推荐 / 推荐歌单
  */
 import { DailyRecommendType, RecommendListType, SongItemType, SwiperItemType } from '../models/MusicModels';
-import { hilog } from '@kit.PerformanceAnalysisKit';
 import { getDailyRecommend, getRecommendList, getSongList, getSwiperList } from '../api/MusicApi';
 import { COLOR_ACCENT, COLOR_TEXT, COLOR_WEAK, SPACE_PAGE } from '../common/Theme';
 import { LoadingTip, SearchBar, SectionHeader } from '../common/Widgets';
 import { gotoPlayer } from '../common/Nav';
-import { router } from '@kit.ArkUI';
 
 @Component
 export struct RecommendView {
   @StorageProp('topSafe') topSafe: number = 0;
-  @StorageProp('dataSource') dataSource: string = 'unknown';
   @StorageLink('swipers') swipers: SwiperItemType[] = [];
   @StorageLink('dailies') dailies: DailyRecommendType[] = [];
   @StorageLink('playlists') playlists: RecommendListType[] = [];
@@ -55,14 +52,6 @@ export struct RecommendView {
     gotoPlayer(song);
   }
 
-  private openSettings(): void {
-    try {
-      router.pushUrl({ url: 'pages/Settings' });
-    } catch (err) {
-      hilog.error(0x0000, 'HeimaMusic', 'openSettings failed: %{public}s', JSON.stringify(err));
-    }
-  }
-
   @Builder
   HeaderArea() {
     Column() {
@@ -72,7 +61,7 @@ export struct RecommendView {
             .fontSize(22)
             .fontWeight(FontWeight.Bold)
             .fontColor(COLOR_TEXT)
-          Text(this.dataSource === 'remote' ? '远程数据 · 已连接服务器' : '本地演示数据（未连接服务器）')
+          Text('本地内置数据')
             .fontSize(12)
             .fontColor(COLOR_WEAK)
             .margin({ top: 2 })
@@ -84,20 +73,6 @@ export struct RecommendView {
           .width(20)
           .height(20)
           .fillColor(COLOR_ACCENT)
-        Row() {
-          Image($r('app.media.ic_setting'))
-            .width(20)
-            .height(20)
-            .fillColor(COLOR_TEXT)
-        }
-        .width(36)
-        .height(36)
-        .margin({ left: 14 })
-        .alignItems(VerticalAlign.Center)
-        .justifyContent(FlexAlign.Center)
-        .onClick(() => {
-          this.openSettings();
-        })
       }
       .width('100%')
       .alignItems(VerticalAlign.Center)

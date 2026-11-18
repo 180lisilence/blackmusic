@@ -16,12 +16,8 @@
 /app.zip
 /music/
 /png/
-/deploy/music-server/public/
 /dist/*.hap
 /dist/*.apk
-
-# ---- 本地部署凭据（不入库）----
-/tools/deploy.local.env
 
 # ---- 本地时间戳备份与构建日志（不入库，文件保留在本地）----
 /backup/

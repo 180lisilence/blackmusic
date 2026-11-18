@@ -5,7 +5,7 @@
 
 - 应用包名：`com.heima.cloudmusic`
 - 版本：`6.0.0`
-- 客户端：ArkTS / ArkUI，4 个页面 + 4 个视图
+- 客户端：ArkTS / ArkUI，3 个页面 + 4 个视图
 - 数据与素材：内置本地样本 + 包内资源
 
 ## 仓库分工
@@ -28,13 +28,13 @@
 
 ```
 ├─ entry/src/main/ets/
-│  ├─ pages/                Splash / Index / Player / Settings
+│  ├─ pages/                Splash / Index / Player
 │  ├─ views/               Recommend / Find / Moment / Mine
-│  ├─ api/                 MusicApi（数据读取与字段兼容解析）
+│  ├─ api/                 MusicApi（本地数据读取）
 │  ├─ common/              AppConfig、DataStore（预加载）、Nav、Theme、Widgets
 │  ├─ models/              MusicModels 数据模型
+│  ├─ player/              MusicPlayer 播放封装
 │  ├─ entryability/        EntryAbility、EntryBackupAbility
-│  └─ mock/                本地样本配置
 ├─ entry/src/main/resources/  内置图标、封面、配色与多深色模式资源
 ├─ tools/                  构建、校验与素材生成脚本
 └─ AppScope/               应用全局配置与图标
@@ -55,17 +55,16 @@
 ## 数据与素材
 
 - `music/`（源 mp3）、`png/`（源壁纸）、成品 HAP/APK、调试截图均不入库，保留在本地。
-- 素材可由脚本从本地素材重新整理生成：
-  - `tools/gen_music_from_folder.py`：从 `music/`、`png/` 整理音频、壁纸并写出五个列表 JSON；
-  - `tools/gen_assets.py`：生成应用图标与封面。
+- `tools/gen_assets.py`：生成应用图标与封面。
+- 列表样本内联在 `api/MusicApi.ets`，封面 / 头像等为包内资源。
 
 ## 当前状态 / 待办
 
 - [x] 播放页 AVPlayer 真播放（事件驱动状态机，计时模拟作降级，真机已验证）
 - [x] 清理调试埋点日志（保留 error 与生命周期模板日志）
+- [x] 纯内置化：数据读取改为本地样本，移除地址配置 / 设置页 / 联网权限，剥离配套服务脚本
 - [ ] 点赞 / 收藏落库（不在本次范围，当前为内存态）
-- [ ] 内置素材打包（rawfile）改造：口径待拍板，详见 `LOCAL-VERSION.md`
-- [ ] 纯内置化收尾：现有数据读取链路与设置页仍保留早期网络适配残留，待切换为纯本地读取
+- [ ] 内置音频打包（rawfile）：把源 mp3 纳入包内并接上播放器，详见 `LOCAL-VERSION.md`
 
 ## 关联项目
 

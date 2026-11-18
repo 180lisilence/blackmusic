@@ -23,7 +23,7 @@ export function gotoPlayer(song: SongItemType): void {
 /**
  * 返回上一页。
  * 先调 router.back()；在 ArkUI-X 安卓宿主下 back 可能静默不弹栈，
- * 因此再用 replaceUrl 兜底回到根页 Index，保证从播放页 / 设置页能退回首页。
+ * 因此再用 replaceUrl 兜底回到根页 Index，保证从播放页能退回首页。
  */
 export function goBack(): void {
   try {

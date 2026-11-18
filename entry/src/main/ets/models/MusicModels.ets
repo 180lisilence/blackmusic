@@ -1,6 +1,6 @@
 /**
  * 黑马云音乐 —— 数据模型层
- * 与教材第 9 章「模型文件」对应：把接口抽到 models 目录，页面只依赖模型。
+ * 与教材第 9 章「模型文件」对应：模型集中在 models 目录，页面只依赖模型。
  */
 
 /** 底部 Tab 数据 */
@@ -41,7 +41,7 @@ export class SongItemType {
   artist: string;
   cover: ResourceStr;
   duration: number;
-  /** 音频地址（远程接口下发；本地样本为空字符串） */
+  /** 音频地址（内置素材打包后填入；当前占位样本为空字符串，播放走计时模拟） */
   url: string;
 
   constructor(id: number, title: string, artist: string, cover: ResourceStr, duration: number, url: string = '') {

@@ -2,7 +2,7 @@
 """黑马云音乐 交付前校验：包清单 / 版本与 API 级别 / 资源引用 / 路由页面 / 模块导入。"""
 import os, re, json, sys, zipfile
 
-ROOT = r"E:\2026music"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ETS = os.path.join(ROOT, "entry", "src", "main", "ets")
 RES = os.path.join(ROOT, "entry", "src", "main", "resources", "base")
 HAP = os.path.join(ROOT, "entry", "build", "default", "outputs", "default", "entry-default-unsigned.hap")
@@ -86,7 +86,8 @@ else:
     check(mod["deviceTypes"] == ["phone", "tablet"], "deviceTypes = %s" % mod["deviceTypes"])
     check(mod["mainElement"] == "EntryAbility", "mainElement = %s" % mod["mainElement"])
     perms = [p["name"] for p in mod.get("requestPermissions", [])]
-    check("ohos.permission.INTERNET" in perms, "权限声明：%s" % perms)
+    check("ohos.permission.INTERNET" not in perms, "纯本地无联网权限：%s" % perms)
+    check("ohos.permission.GET_NETWORK_INFO" not in perms, "无网络状态读取权限：%s" % perms)
 
     entries = set(zf.namelist())
     hap_media = {os.path.splitext(os.path.basename(n))[0] for n in entries if "/media/" in n}

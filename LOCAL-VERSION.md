@@ -1,38 +1,31 @@
 # 纯本地内置版调研方案
 
-> 状态：**调研阶段**，本文件只记录现状、方案、风险与待拍板项，业务代码尚未改造。
+> 状态：**去网络残留已落地（2026-11-19）**：数据读取改为内联本地样本，地址配置 / 设置页 / 联网权限 / 配套服务脚本已剥离；剩余工作是把真实音频与大图打进 rawfile（见 §3、§5、§11）。
 > 目录：`E:\2026music-local`　分支：`main`（仓库 blackmusic）
 
 ## 1. 目标
 
-去掉对外部网络与公网数据的依赖，App 直接读取打包进 HAP 包内的音频 mp3 与封面图片素材：
+去掉对外部网络与外部数据的依赖，App 直接读取打包进 HAP 包内的音频 mp3 与封面图片素材：
 - 不发 HTTP 请求，不访问任何外部地址；
-- 5 份列表数据（轮播 / 每日推荐 / 推荐歌单 / 歌曲 / 动态）从包内 JSON 读取；
+- 5 份列表数据（轮播 / 每日推荐 / 推荐歌单 / 歌曲 / 动态）由包内样本提供；
 - 音频、封面、头像全部来自包内资源。
 
-## 2. 现状：网络依赖点（待改造链路）
+## 2. 改造前：网络依赖点（历史链路，已移除）
 
-```
-DataStore.preloadAll()
-  └─ 5 个 getXxx() in MusicApi
-       └─ HttpClient.httpGet(path)  拼 getBaseUrl() + 端点
-            └─ http.request 公网 JSON
-                 └─ 解析（字段别名兼容）→ 模型；封面/音频为 http URL 字符串
-                      └─ 失败回退内置 mock（$r 占位图，url 为空字符串）
-```
+改造前链路：`DataStore.preloadAll()` → `MusicApi` 五个 getter → 网络请求取外部 JSON，失败回退内置 mock；该链路已整体移除，现 getter 直接返回内联本地样本。
 
 涉及文件（`entry/src/main/ets/`）：
 
-| 文件 | 现状职责 | 本地版处置 |
+| 文件 | 改造前职责 | 落地结果（2026-11-19） |
 | --- | --- | --- |
-| `common/DataStore.ets` | 并行取 5 类数据写 AppStorage | 基本不变，仅数据源换成本地 |
-| `api/MusicApi.ets` | 5 端点 HTTP 取数 + 解析 + mock 兜底 | 改为读 rawfile JSON；解析器复用 |
-| `api/HttpClient.ets` | http 拼接与请求 | 本地版不再调用（可保留备用） |
-| `common/AppConfig.ets` | baseUrl 存取、Preferences | 本地版去掉地址探测/保存 |
-| `common/Nav.ets` | 路由携带 PlayerParams（含 cover/url） | 字段语义改为本地资源标识 |
-| `models/MusicModels.ets` | cover: ResourceStr、avatar: ResourceStr、url: string | 模型结构可不动，url/cover 取值改为本地标识 |
-| `player/MusicPlayer.ets` | `load(url)` → `player.url = url`，事件驱动状态机 | 增加 rawfile fd 播放分支 |
-| `views/*`、`pages/*` | `Image(item.cover)` / `Image(song.cover)` 渲染 | 适配本地资源引用 |
+| `common/DataStore.ets` | 并行取 5 类数据写 AppStorage | 未改，仍并行取 5 类写 AppStorage（数据源已是本地） |
+| `api/MusicApi.ets` | 5 端点 HTTP 取数 + 解析 + mock 兜底 | 已改为内联本地样本 + 模拟延时；外部优先分支、解析器、httpGet 已删 |
+| `api/HttpClient.ets` | http 拼接与请求 | 已删除，归档于 `backup/archive-source-20261119/` |
+| `common/AppConfig.ets` | baseUrl 存取、Preferences | 地址探测 / 保存 / Preferences 已删，仅留数据源标记 |
+| `common/Nav.ets` | 路由携带 PlayerParams（含 cover/url） | 未改，路由参数不变 |
+| `models/MusicModels.ets` | cover: ResourceStr、avatar: ResourceStr、url: string | 模型结构未动，url 注释改为本地口径 |
+| `player/MusicPlayer.ets` | `load(url)` → `player.url = url`，事件驱动状态机 | 未改；rawfile fd 播放分支留待素材打包 |
+| `views/*`、`pages/*` | `Image(item.cover)` / `Image(song.cover)` 渲染 | 已去掉设置入口与外部状态文案；图片仍用 `$r` 占位图 |
 
 ## 3. 包内资源规划（rawfile）
 
@@ -52,7 +45,7 @@ entry/src/main/resources/rawfile/
 
 - rawfile 原样打包、不做索引编译，适合放 mp3 / 大图 / JSON；
 - 文件名统一用 ASCII（`song_N.mp3`、`wall_NN.jpg`），避免中文、空格、括号在不同运行时下的编码问题；
-- JSON 内的 `url` / `cover` / `image` / `avatar` 字段由公网 URL 改为包内相对标识，例如：
+- JSON 内的 `url` / `cover` / `image` / `avatar` 字段由外部地址改为包内相对标识，例如：
   - 音频：`audio/song_1.mp3`
   - 封面：`images/wall_01.jpg`
 
@@ -64,9 +57,9 @@ entry/src/main/resources/rawfile/
 | 封面壁纸 | `png/` | 21 张 jpg | 约 12.8 MB | JSON 引用 `wall_01…wall_12` 轮换 |
 | 原始拍照 | `app/DCIM/` | 25 张 | 129.7 MB | 未被数据使用，**不进包**，副本已排除 |
 | 内置图标/占位图 | `resources/base/media/` | 52 文件 | — | svg 图标 + banner/cover/playlist/avatar 占位，继续用 `$r` |
-| 现有样本 JSON | `deploy/music-server/data/` | 5 份 | 合计约 7.1 KB | 字段口径与解析别名以此为准 |
+| 历史配套样本 JSON | `deploy/music-server/data/`（已剥离） | 5 份 | 合计约 7.1 KB | 已归档于 `backup/archive-deploy-20261119/`，当前样本为内联 TS 对象 |
 
-现有生成脚本 `tools/gen_music_from_folder.py` 已实现「mp3 按时长排序去重 → `song_N.mp3`；壁纸 → `wall_NN.ext`；生成 5 份 JSON」的映射逻辑，本地版可改造该脚本，把输出目录从 `public/` 改为 rawfile，URL 前缀改为本地相对路径。
+原素材整理脚本 `tools/gen_music_from_folder.py` 已随配套目录归档；后续打包时需重写一版 rawfile 输出脚本：mp3 按时长排序去重 → `song_N.mp3`，壁纸 → `wall_NN.ext`，生成本地路径清单。
 
 ### 歌曲与素材对应（以 songs.json id 为准）
 
@@ -107,9 +100,9 @@ entry/src/main/resources/rawfile/
 - 封面/头像在 `Image(cover)` 中消费，`cover` 类型为 `ResourceStr`；
 - 本地图片优先用 `$rawfile('images/wall_01.jpg')` 构造 Resource 对象；字符串路径形式（`rawfile://…`）在 ArkUI-X 下兼容性需实测。
 
-### 5.4 配置与设置页
-- 去掉 baseUrl 探测、Preferences 保存与设置页里的地址输入/自检；
-- `AppConfig` 保留空实现或删除网络相关方法，Settings 页对应入口隐藏。
+### 5.4 配置与设置页（已完成）
+- baseUrl 探测、Preferences 保存与设置页地址输入 / 自检已移除；
+- `AppConfig` 网络相关方法已删，仅留数据源标记；Settings 页面与各视图设置入口已删除。
 
 ## 6. 已核实的鸿蒙 API（官方文档）
 
@@ -150,17 +143,19 @@ entry/src/main/resources/rawfile/
 - 副本已排除：`oh_modules`、`build`、`entry/build`、`.hvigor`、`.appanalyzer`、`backup`、`app/DCIM`、`*.hap/*.apk/*.zip`；
 - 本地版是否推送远端、何时推送，等明确指令后再执行（沿用改动前时间戳备份习惯）。
 
-## 10. 待拍板口径
+## 10. 口径结论（2026-11-19 拍板）
 
-1. 音频是否压缩降码率？封面是否压缩为缩略图？
-2. id 10/11/12 三首近静音/超短曲目是否保留？
-3. 本地版是否保留外部兜底开关，还是纯内置？
-4. 本地 JSON 是否保留 `album` 等冗余字段？
+1. 音频 / 封面压缩：本轮不转码压缩，沿用现有 `$r` 占位图；真实 mp3 进 rawfile 属后续打包项，压缩方案到打包时再定。
+2. id 10/11/12 超短曲：当前内联样本为 8 首占位曲，不含这三首；后续打包时再评估是否剔除。
+3. 外部兜底：纯内置，不留外部兜底开关。
+4. 冗余字段：本地样本为 TS 对象，无 JSON 冗余字段问题。
 
-## 11. 建议实施顺序（待确认后开工）
+## 11. 素材打包阶段实施顺序（去网络残留已先行完成）
 
-1. 改造素材生成脚本：输出 rawfile `audio/ images/ data/`，生成本地路径 JSON 与映射清单；
-2. 数据层接入 rawfile 读取，复用解析器；
+> 以下为真实音频 / 大图进 rawfile 的后续步骤；数据层去网络、设置页与权限剥离、配套脚本剥离已在本轮完成。
+
+1. 改造素材整理脚本：输出 rawfile `audio/ images/ data/`，生成本地路径清单与映射表；
+2. 数据层接入 rawfile 读取（当前为内联 TS 样本，后续可替换为 rawfile JSON）；
 3. 播放层接 `getRawFd → fdSrc`；
 4. 图片渲染适配本地资源；
 5. 构建 HAP 装机：先验证封面显示，再验证本地音频出声；
