@@ -56,11 +56,11 @@
       <div class="badge-row">
         <span class="badge">ArkTS / ArkUI</span>
         <span class="badge">ArkUI-X</span>
-        <span class="badge">Node.js 后端</span>
+        <span class="badge">内置素材打包</span>
         <span class="badge">com.heima.cloudmusic 6.0.0</span>
       </div>
       <h1>黑马云音乐</h1>
-      <p class="subtitle">HarmonyOS ArkTS 音乐应用，经 ArkUI-X 运行于安卓设备；配套零依赖 Node.js 后端 API。个人学习项目，与官方音乐平台无关。</p>
+      <p class="subtitle">HarmonyOS ArkTS 音乐应用，经 ArkUI-X 运行于安卓设备；歌曲、封面等素材与列表数据打包在应用内，由设备本地数据源提供。个人学习项目，与官方音乐平台无关。</p>
       <div class="actions">
         <a class="btn btn-primary" href="https://github.com/180lisilence/blackmusic">查看源码</a>
         <a class="btn btn-ghost" href="https://github.com/180lisilence/hap-runner-HarmonyOS">配套运行器</a>
@@ -74,7 +74,7 @@
       <div class="grid">
         <div class="card">
           <h3>首页推荐</h3>
-          <p>轮播 Banner、每日推荐、推荐歌单；远程数据优先，拉取失败回退内置本地样本。</p>
+          <p>轮播 Banner、每日推荐、推荐歌单；数据来自应用内置本地样本。</p>
         </div>
         <div class="card">
           <h3>音乐与动态</h3>
@@ -82,19 +82,15 @@
         </div>
         <div class="card">
           <h3>播放页</h3>
-          <p>封面、进度、上一首 / 播放暂停 / 下一首；当前为计时模拟，AVPlayer 真播放待接入。</p>
+          <p>封面、进度、上一首 / 播放暂停 / 下一首；已接入 AVPlayer 真播放，不具备播放器能力时回退计时模拟。</p>
         </div>
         <div class="card">
-          <h3>服务器设置</h3>
-          <p>地址运行时可配并持久化到 Preferences；首页顶部标记远程数据 / 本地演示状态。</p>
+          <h3>本地素材</h3>
+          <p>图标、封面、壁纸、头像等资源随包内置；列表样本由本地配置提供。</p>
         </div>
         <div class="card">
           <h3>统一数据层</h3>
           <p>入口页生命周期预加载写入 AppStorage，子视图 @StorageLink 订阅，规避 ArkUI-X 生命周期不回调问题。</p>
-        </div>
-        <div class="card">
-          <h3>零依赖后端</h3>
-          <p>Node 原生 http 提供五个业务接口与静态资源；改 JSON 数据无需重启进程。</p>
         </div>
       </div>
     </div>
@@ -121,23 +117,6 @@
           <figcaption>推荐歌单</figcaption>
         </figure>
       </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="wrap">
-      <h2>后端接口</h2>
-      <table>
-        <tr><th>路径</th><th>说明</th></tr>
-        <tr><td><code>GET /health</code></td><td>健康检查与路由清单</td></tr>
-        <tr><td><code>GET /swiper</code></td><td>轮播图</td></tr>
-        <tr><td><code>GET /dailyRecommend</code></td><td>每日推荐</td></tr>
-        <tr><td><code>GET /recommendList</code></td><td>推荐歌单</td></tr>
-        <tr><td><code>GET /songList</code></td><td>歌曲列表</td></tr>
-        <tr><td><code>GET /momentList</code></td><td>动态列表（内嵌歌曲）</td></tr>
-        <tr><td><code>GET /images/&lt;file&gt;</code></td><td>封面 / 头像静态资源</td></tr>
-        <tr><td><code>GET /audio/&lt;file&gt;</code></td><td>音频静态资源</td></tr>
-      </table>
     </div>
   </section>
 
