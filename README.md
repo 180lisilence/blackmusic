@@ -8,11 +8,18 @@
 - 客户端：ArkTS / ArkUI，4 个页面 + 4 个视图
 - 后端：Node.js 原生 `http`，无第三方依赖，pm2 托管 + nginx 反代
 
+## 仓库分工
+
+| 角色 | 仓库 | 分支 | 说明 |
+| --- | --- | --- | --- |
+| 本地主线 / 客户端（本仓库） | [heimayun-music-self](https://github.com/180lisilence/heimayun-music-self) | `main` / `local` | ArkTS 客户端工程，主线开发方向，日常提交与推送均指向本仓库 |
+| 服务器版本 | [housemusic](https://github.com/180lisilence/housemusic) | `main` | 后端 / 服务器部署版本，独立仓库维护；本仓库仅做跳转标注，不向其推送 |
+
 ## 功能特性
 
 - **首页推荐**：轮播 Banner、每日推荐、推荐歌单，远程数据优先，拉取失败回退内置本地样本。
 - **音乐列表**：歌曲标题、歌手、封面、时长；动态（Moment）内嵌歌曲信息。
-- **播放页**：封面、进度、上一首 / 播放暂停 / 下一首；当前为计时模拟，AVPlayer 真播放待接入。
+- **播放页**：封面、进度、上一首 / 播放暂停 / 下一首；已接入 AVPlayer 真播放（事件驱动状态机），运行时不具备播放器能力时回退计时模拟。
 - **服务器设置**：地址运行时可配，持久化到 Preferences；首页顶部标记「远程数据 / 本地演示」。
 - **统一数据层**：入口页生命周期预加载 → 写入 AppStorage → 子视图 `@StorageLink` 订阅（规避 ArkUI-X 子组件生命周期不回调的问题）。
 - **后端 API**：五个业务接口 + 封面图 / 音频静态目录，读 JSON 即取，改数据无需重启进程。
@@ -85,10 +92,12 @@
 
 ## 当前状态 / 待办
 
-- [ ] 播放页接入 AVPlayer 真播放（保留计时模拟作为运行时缺失降级）
-- [ ] 点赞 / 收藏落库（当前为内存态）
-- [ ] 清理调试埋点日志
+- [x] 播放页 AVPlayer 真播放（事件驱动状态机，计时模拟作降级，真机已验证）
+- [x] 清理调试埋点日志（保留 error 与生命周期模板日志）
+- [ ] 点赞 / 收藏落库（不在本次范围，当前为内存态）
+- [ ] 离线版（rawfile 打包）改造：口径待拍板，详见 `LOCAL-VERSION.md`
 
 ## 关联项目
 
+- [housemusic](https://github.com/180lisilence/housemusic)：服务器 / 后端部署版本仓库（`main` 分支）。
 - [hap-runner-HarmonyOS](https://github.com/180lisilence/hap-runner-HarmonyOS)：加载本 HAP 的安卓宿主运行器。
