@@ -1,0 +1,20 @@
+PASS  模块文件数量：17 个 .ets
+PASS  本地模块导入全部可解析
+PASS  app.media 引用 47 项，全部存在
+PASS  路由页面注册一致：['pages/Splash', 'pages/Index', 'pages/Player', 'pages/Settings']
+PASS  代码内跳转目标均已注册：['pages/Index', 'pages/Player', 'pages/Settings']
+PASS  versionName = 6.0.0
+PASS  versionCode = 6000000
+PASS  bundleName = com.heima.cloudmusic
+PASS  minAPIVersion = 60000020（HarmonyOS 6.0.0 / API 20）
+PASS  targetAPIVersion = 60000020
+PASS  compileSdkVersion = 26.0.0.105
+PASS  deviceTypes = ['phone', 'tablet']
+PASS  mainElement = EntryAbility
+PASS  权限声明：['ohos.permission.INTERNET', 'ohos.permission.GET_NETWORK_INFO']
+PASS  HAP 内媒体资源 52 项，覆盖全部引用
+PASS  ArkTS 字节码：ets/modules.abc（221476 字节）
+PASS  资源索引：resources.index
+PASS  图标/封面资源格式完整
+
+结果：全部通过

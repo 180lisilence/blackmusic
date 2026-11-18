@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "title": "冬眠 · 精选集",
+    "count": "30.1万",
+    "cover": "http://example.com/music/images/wall_04.jpg"
+  },
+  {
+    "id": 2,
+    "title": "晴天 · 精选集",
+    "count": "47.4万",
+    "cover": "http://example.com/music/images/wall_05.jpg"
+  },
+  {
+    "id": 3,
+    "title": "忘情水 · 精选集",
+    "count": "64.7万",
+    "cover": "http://example.com/music/images/wall_06.jpg"
+  },
+  {
+    "id": 4,
+    "title": "青花瓷 · 精选集",
+    "count": "81.10万",
+    "cover": "http://example.com/music/images/wall_07.jpg"
+  },
+  {
+    "id": 5,
+    "title": "菩提树下为你许愿 · 精选集",
+    "count": "98.13万",
+    "cover": "http://example.com/music/images/wall_08.jpg"
+  },
+  {
+    "id": 6,
+    "title": "古月方源1 · 精选集",
+    "count": "115.16万",
+    "cover": "http://example.com/music/images/wall_09.jpg"
+  }
+]

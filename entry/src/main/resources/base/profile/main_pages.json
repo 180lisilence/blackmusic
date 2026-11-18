@@ -1,0 +1,8 @@
+{
+  "src": [
+    "pages/Splash",
+    "pages/Index",
+    "pages/Player",
+    "pages/Settings"
+  ]
+}
