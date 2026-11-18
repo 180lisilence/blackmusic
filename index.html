@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>黑马云音乐 · heimayun-music-self</title>
+  <style>
+    :root {
+      --bg: #131110;
+      --card: #1f1c19;
+      --text: #f0ebe4;
+      --muted: #b3a89a;
+      --accent: #f5b544;
+      --border: #332d26;
+      --code-bg: #0d0b0a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.7;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+    header { padding: 64px 0 36px; text-align: center; }
+    .badge-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
+    .badge { border: 1px solid var(--border); color: var(--muted); border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+    h1 { font-size: 2.2rem; letter-spacing: .5px; }
+    .subtitle { color: var(--muted); margin-top: 12px; font-size: 1.05rem; }
+    .actions { margin-top: 24px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn { display: inline-block; padding: 10px 20px; border-radius: 10px; text-decoration: none; font-size: 14px; }
+    .btn-primary { background: var(--accent); color: #2b1d05; font-weight: 600; }
+    .btn-ghost { border: 1px solid var(--border); color: var(--text); }
+    section { padding: 32px 0; }
+    h2 { font-size: 1.35rem; margin-bottom: 18px; border-left: 3px solid var(--accent); padding-left: 10px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+    .card h3 { font-size: 1rem; margin-bottom: 8px; color: var(--accent); }
+    .card p { color: var(--muted); font-size: 14px; }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .gallery figure { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    .gallery img { width: 100%; display: block; aspect-ratio: 16/10; object-fit: cover; }
+    .gallery figcaption { padding: 10px 14px; color: var(--muted); font-size: 13px; }
+    pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; overflow-x: auto; }
+    code { font-family: "JetBrains Mono", Consolas, monospace; font-size: 13px; color: var(--text); }
+    .comment { color: var(--muted); }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; }
+    td { color: var(--text); }
+    footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; text-align: center; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="badge-row">
+        <span class="badge">ArkTS / ArkUI</span>
+        <span class="badge">ArkUI-X</span>
+        <span class="badge">Node.js 后端</span>
+        <span class="badge">com.heima.cloudmusic 6.0.0</span>
+      </div>
+      <h1>黑马云音乐</h1>
+      <p class="subtitle">HarmonyOS ArkTS 音乐应用，经 ArkUI-X 运行于安卓设备；配套零依赖 Node.js 后端 API。个人学习项目，与官方音乐平台无关。</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://github.com/180lisilence/heimayun-music-self">查看源码</a>
+        <a class="btn btn-ghost" href="https://github.com/180lisilence/hap-runner-HarmonyOS">配套运行器</a>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <h2>功能特性</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>首页推荐</h3>
+          <p>轮播 Banner、每日推荐、推荐歌单；远程数据优先，拉取失败回退内置本地样本。</p>
+        </div>
+        <div class="card">
+          <h3>音乐与动态</h3>
+          <p>歌曲标题、歌手、封面、时长；动态列表内嵌歌曲信息，字段多别名兼容解析。</p>
+        </div>
+        <div class="card">
+          <h3>播放页</h3>
+          <p>封面、进度、上一首 / 播放暂停 / 下一首；当前为计时模拟，AVPlayer 真播放待接入。</p>
+        </div>
+        <div class="card">
+          <h3>服务器设置</h3>
+          <p>地址运行时可配并持久化到 Preferences；首页顶部标记远程数据 / 本地演示状态。</p>
+        </div>
+        <div class="card">
+          <h3>统一数据层</h3>
+          <p>入口页生命周期预加载写入 AppStorage，子视图 @StorageLink 订阅，规避 ArkUI-X 生命周期不回调问题。</p>
+        </div>
+        <div class="card">
+          <h3>零依赖后端</h3>
+          <p>Node 原生 http 提供五个业务接口与静态资源；改 JSON 数据无需重启进程。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>界面预览</h2>
+      <div class="gallery">
+        <figure>
+          <img src="./entry/src/main/resources/base/media/splash.jpg" alt="启动页">
+          <figcaption>启动页</figcaption>
+        </figure>
+        <figure>
+          <img src="./entry/src/main/resources/base/media/banner_1.jpg" alt="轮播 Banner">
+          <figcaption>轮播 Banner</figcaption>
+        </figure>
+        <figure>
+          <img src="./entry/src/main/resources/base/media/cover_1.jpg" alt="歌曲封面">
+          <figcaption>歌曲封面</figcaption>
+        </figure>
+        <figure>
+          <img src="./entry/src/main/resources/base/media/playlist_1.jpg" alt="推荐歌单">
+          <figcaption>推荐歌单</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>后端接口</h2>
+      <table>
+        <tr><th>路径</th><th>说明</th></tr>
+        <tr><td><code>GET /health</code></td><td>健康检查与路由清单</td></tr>
+        <tr><td><code>GET /swiper</code></td><td>轮播图</td></tr>
+        <tr><td><code>GET /dailyRecommend</code></td><td>每日推荐</td></tr>
+        <tr><td><code>GET /recommendList</code></td><td>推荐歌单</td></tr>
+        <tr><td><code>GET /songList</code></td><td>歌曲列表</td></tr>
+        <tr><td><code>GET /momentList</code></td><td>动态列表（内嵌歌曲）</td></tr>
+        <tr><td><code>GET /images/&lt;file&gt;</code></td><td>封面 / 头像静态资源</td></tr>
+        <tr><td><code>GET /audio/&lt;file&gt;</code></td><td>音频静态资源</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>构建 HAP</h2>
+      <pre><code><span class="comment"># debug 构建，产物输出到 dist/</span>
+.\tools\build.ps1
+
+<span class="comment"># release 构建并执行交付校验</span>
+.\tools\build.ps1 -Mode release -Verify</code></pre>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <p>个人学习项目，与官方音乐平台无关。</p>
+      <p style="margin-top:8px">源码见 <a href="https://github.com/180lisilence/heimayun-music-self">180lisilence/heimayun-music-self</a> ｜ 运行器见 <a href="https://github.com/180lisilence/hap-runner-HarmonyOS">180lisilence/hap-runner-HarmonyOS</a></p>
+    </div>
+  </footer>
+</body>
+</html>
