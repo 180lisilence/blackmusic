@@ -11,9 +11,9 @@ PASS  targetAPIVersion = 60000020
 PASS  compileSdkVersion = 26.0.0.105
 PASS  deviceTypes = ['phone', 'tablet']
 PASS  mainElement = EntryAbility
-PASS  权限声明：['ohos.permission.INTERNET', 'ohos.permission.GET_NETWORK_INFO']
+PASS  权限声明：['ohos.permission.INTERNET', 'ohos.permission.GET_NETWORK_INFO', 'ohos.permission.KEEP_BACKGROUND_RUNNING']
 PASS  HAP 内媒体资源 52 项，覆盖全部引用
-PASS  ArkTS 字节码：ets/modules.abc（237772 字节）
+PASS  ArkTS 字节码：ets/modules.abc（244020 字节）
 PASS  资源索引：resources.index
 PASS  图标/封面资源格式完整
 

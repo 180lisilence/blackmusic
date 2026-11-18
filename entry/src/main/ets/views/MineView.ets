@@ -50,7 +50,6 @@ export struct MineView {
       }
       return;
     }
-    hilog.info(0x0000, 'HeimaMusic', 'menu placeholder: %{public}s', menu.name);
   }
 
   @Builder
