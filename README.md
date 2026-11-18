@@ -1,4 +1,4 @@
-# 黑马云音乐 · heimayun-music-self
+# 黑马云音乐 · blackmusic
 
 > 个人学习项目，与官方音乐平台无关。
 > HarmonyOS ArkTS 音乐应用，经 ArkUI-X 运行于安卓设备；配套零依赖 Node.js 后端 API。
@@ -12,8 +12,9 @@
 
 | 角色 | 仓库 | 分支 | 说明 |
 | --- | --- | --- | --- |
-| 本地主线 / 客户端（本仓库） | [heimayun-music-self](https://github.com/180lisilence/heimayun-music-self) | `main` / `local` | ArkTS 客户端工程，主线开发方向，日常提交与推送均指向本仓库 |
+| 本地主线 / 客户端（本仓库） | [blackmusic](https://github.com/180lisilence/blackmusic) | `main` | ArkTS 客户端工程，主线开发方向，日常提交与推送均指向本仓库 |
 | 服务器版本 | [housemusic](https://github.com/180lisilence/housemusic) | `main` | 后端 / 服务器部署版本，独立仓库维护；本仓库仅做跳转标注，不向其推送 |
+| 旧仓库（冷备份） | [heimayun-music-self](https://github.com/180lisilence/heimayun-music-self) | `main` / `local` | 历史备份，不再主动维护与推送 |
 
 ## 功能特性
 
@@ -99,5 +100,7 @@
 
 ## 关联项目
 
+- [blackmusic](https://github.com/180lisilence/blackmusic)：本仓库，客户端主线（`main` 分支）。
 - [housemusic](https://github.com/180lisilence/housemusic)：服务器 / 后端部署版本仓库（`main` 分支）。
+- [heimayun-music-self](https://github.com/180lisilence/heimayun-music-self)：旧仓库冷备份，不再维护。
 - [hap-runner-HarmonyOS](https://github.com/180lisilence/hap-runner-HarmonyOS)：加载本 HAP 的安卓宿主运行器。
