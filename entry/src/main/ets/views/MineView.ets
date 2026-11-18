@@ -8,6 +8,7 @@ import { COLOR_ACCENT, COLOR_SUB, COLOR_TEXT, COLOR_WEAK, SPACE_PAGE } from '../
 import { SectionHeader } from '../common/Widgets';
 import { gotoPlayer } from '../common/Nav';
 import { router } from '@kit.ArkUI';
+import { hilog } from '@kit.PerformanceAnalysisKit';
 
 @Component
 export struct MineView {
@@ -29,6 +30,27 @@ export struct MineView {
     getSongList().then((list: SongItemType[]) => {
       this.songs = list;
     });
+  }
+
+  private openSettings(): void {
+    try {
+      router.pushUrl({ url: 'pages/Settings' });
+    } catch (err) {
+      hilog.error(0x0000, 'HeimaMusic', 'openSettings failed: %{public}s', JSON.stringify(err));
+    }
+  }
+
+  /** 菜单点击：服务器设置进入设置页；其余为演示入口（待接对应列表页） */
+  private openMenu(menu: MineMenuType): void {
+    if (menu.name === '服务器设置') {
+      try {
+        router.pushUrl({ url: 'pages/Settings' });
+      } catch (err) {
+        hilog.error(0x0000, 'HeimaMusic', 'openMenu pushUrl failed: %{public}s', JSON.stringify(err));
+      }
+      return;
+    }
+    hilog.info(0x0000, 'HeimaMusic', 'menu placeholder: %{public}s', menu.name);
   }
 
   @Builder
@@ -84,9 +106,7 @@ export struct MineView {
     .height(54)
     .alignItems(VerticalAlign.Center)
     .onClick(() => {
-      if (menu.name === '服务器设置') {
-        router.pushUrl({ url: 'pages/Settings' });
-      }
+      this.openMenu(menu);
     })
   }
 
@@ -146,10 +166,19 @@ export struct MineView {
               .fontWeight(FontWeight.Bold)
               .fontColor(COLOR_TEXT)
             Blank()
-            Image($r('app.media.ic_setting'))
-              .width(20)
-              .height(20)
-              .fillColor(COLOR_TEXT)
+            Row() {
+              Image($r('app.media.ic_setting'))
+                .width(20)
+                .height(20)
+                .fillColor(COLOR_TEXT)
+            }
+            .width(36)
+            .height(36)
+            .alignItems(VerticalAlign.Center)
+            .justifyContent(FlexAlign.Center)
+            .onClick(() => {
+              this.openSettings();
+            })
           }
           .width('100%')
           .alignItems(VerticalAlign.Center)

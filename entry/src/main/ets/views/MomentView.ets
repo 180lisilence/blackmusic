@@ -1,31 +1,63 @@
 /**
  * 首页 —— 动态页（教材 9.2.5 首页-动态页）
  * 结构：互动广场 + 动态列表（作者 / 内容 / 歌曲卡片 / 点赞评论分享）
+ * 说明：卡片与操作行均为视图内 @Builder，事件挂容器级，规避独立 @Component
+ *       在 ArkUI-X 下子节点点击事件不转发的问题。
  */
-import { MomentItemType, SongItemType } from '../models/MusicModels';
+import { MomentItemType } from '../models/MusicModels';
 import { getMomentList } from '../api/MusicApi';
 import { COLOR_ACCENT, COLOR_CARD, COLOR_SUB, COLOR_TEXT, COLOR_WEAK, SPACE_PAGE } from '../common/Theme';
 import { LoadingTip } from '../common/Widgets';
 import { gotoPlayer } from '../common/Nav';
+import { hilog } from '@kit.PerformanceAnalysisKit';
 
 @Component
-struct MomentCard {
-  @ObjectLink item: MomentItemType;
+export struct MomentView {
+  @StorageProp('topSafe') topSafe: number = 0;
+  @StorageLink('moments') moments: MomentItemType[] = [];
 
-  build() {
+  aboutToAppear(): void {
+    getMomentList().then((list: MomentItemType[]) => {
+      this.moments = list;
+    });
+  }
+
+  /** 点赞：拷贝数组重新赋值，触发视图刷新；liked 翻转并同步计数 */
+  private toggleLike(index: number): void {
+    if (index < 0 || index >= this.moments.length) {
+      return;
+    }
+    const list: MomentItemType[] = this.moments.slice();
+    const m: MomentItemType = list[index];
+    m.liked = !m.liked;
+    m.likes = m.liked ? m.likes + 1 : m.likes - 1;
+    list[index] = m;
+    this.moments = list;
+  }
+
+  private onComment(index: number): void {
+    hilog.info(0x0000, 'HeimaMusic', 'comment placeholder: %{public}d', index);
+  }
+
+  private onShare(index: number): void {
+    hilog.info(0x0000, 'HeimaMusic', 'share placeholder: %{public}d', index);
+  }
+
+  @Builder
+  MomentCardRow(item: MomentItemType, index: number) {
     Column() {
       Row() {
-        Image(this.item.avatar)
+        Image(item.avatar)
           .width(40)
           .height(40)
           .borderRadius(20)
           .objectFit(ImageFit.Cover)
 
         Column() {
-          Text(this.item.author)
+          Text(item.author)
             .fontSize(13)
             .fontColor(COLOR_SUB)
-          Text(this.item.publishedAt)
+          Text(item.publishedAt)
             .fontSize(11)
             .fontColor(COLOR_WEAK)
             .margin({ top: 2 })
@@ -42,7 +74,7 @@ struct MomentCard {
       .width('100%')
       .alignItems(VerticalAlign.Center)
 
-      Text(this.item.content)
+      Text(item.content)
         .fontSize(14)
         .fontColor('#ececf2')
         .lineHeight(21)
@@ -50,19 +82,19 @@ struct MomentCard {
         .margin({ top: 12 })
 
       Row() {
-        Image(this.item.song.cover)
+        Image(item.song.cover)
           .width(44)
           .height(44)
           .borderRadius(8)
           .objectFit(ImageFit.Cover)
 
         Column() {
-          Text(this.item.song.title)
+          Text(item.song.title)
             .fontSize(13)
             .fontColor(COLOR_TEXT)
             .maxLines(1)
             .textOverflow({ overflow: TextOverflow.Ellipsis })
-          Text(this.item.song.artist)
+          Text(item.song.artist)
             .fontSize(11)
             .fontColor(COLOR_WEAK)
             .margin({ top: 3 })
@@ -89,7 +121,7 @@ struct MomentCard {
       .margin({ top: 12 })
       .alignItems(VerticalAlign.Center)
       .onClick(() => {
-        gotoPlayer(this.item.song);
+        gotoPlayer(item.song);
       })
 
       Row() {
@@ -97,15 +129,14 @@ struct MomentCard {
           Image($r('app.media.ic_heart'))
             .width(16)
             .height(16)
-            .fillColor(this.item.liked ? COLOR_ACCENT : COLOR_WEAK)
-          Text(this.item.likes.toString())
+            .fillColor(item.liked ? COLOR_ACCENT : COLOR_WEAK)
+          Text(item.likes.toString())
             .fontSize(12)
-            .fontColor(this.item.liked ? COLOR_ACCENT : COLOR_WEAK)
+            .fontColor(item.liked ? COLOR_ACCENT : COLOR_WEAK)
             .margin({ left: 5 })
         }
         .onClick(() => {
-          this.item.liked = !this.item.liked;
-          this.item.likes = this.item.liked ? this.item.likes + 1 : this.item.likes - 1;
+          this.toggleLike(index);
         })
 
         Row() {
@@ -113,24 +144,30 @@ struct MomentCard {
             .width(16)
             .height(16)
             .fillColor(COLOR_WEAK)
-          Text(this.item.comments.toString())
+          Text(item.comments.toString())
             .fontSize(12)
             .fontColor(COLOR_WEAK)
             .margin({ left: 5 })
         }
         .margin({ left: 26 })
+        .onClick(() => {
+          this.onComment(index);
+        })
 
         Row() {
           Image($r('app.media.ic_share'))
             .width(15)
             .height(15)
             .fillColor(COLOR_WEAK)
-          Text(this.item.shares.toString())
+          Text(item.shares.toString())
             .fontSize(12)
             .fontColor(COLOR_WEAK)
             .margin({ left: 5 })
         }
         .margin({ left: 26 })
+        .onClick(() => {
+          this.onShare(index);
+        })
       }
       .width('100%')
       .margin({ top: 12 })
@@ -139,18 +176,6 @@ struct MomentCard {
     .padding({ top: 16, bottom: 16 })
     .alignItems(HorizontalAlign.Start)
     .border({ width: { bottom: 0.5 }, color: '#1c1c22' })
-  }
-}
-
-@Component
-export struct MomentView {
-  @StorageProp('topSafe') topSafe: number = 0;
-  @StorageLink('moments') moments: MomentItemType[] = [];
-
-  aboutToAppear(): void {
-    getMomentList().then((list: MomentItemType[]) => {
-      this.moments = list;
-    });
   }
 
   build() {
@@ -184,8 +209,8 @@ export struct MomentView {
           LoadingTip()
         } else {
           Column() {
-            ForEach(this.moments, (item: MomentItemType) => {
-              MomentCard({ item: item })
+            ForEach(this.moments, (item: MomentItemType, index: number) => {
+              this.MomentCardRow(item, index)
             }, (item: MomentItemType) => item.id.toString())
           }
           .width('100%')

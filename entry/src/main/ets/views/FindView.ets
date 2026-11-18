@@ -1,21 +1,33 @@
 /**
  * 首页 —— 发现页（教材 9.2.4 首页-发现页）
- * 结构：标题 + 搜索 / 猜你喜欢歌曲列表
+ * 结构：标题 + 搜索框（按歌名/歌手本地过滤）+ 猜你喜欢歌曲列表
  */
 import { SongItemType } from '../models/MusicModels';
 import { getSongList } from '../api/MusicApi';
-import { COLOR_ACCENT, COLOR_SUB, COLOR_TEXT, COLOR_WEAK, SPACE_PAGE } from '../common/Theme';
-import { formatTime, LoadingTip, SearchBar, SectionHeader } from '../common/Widgets';
+import { COLOR_ACCENT, COLOR_CARD, COLOR_SUB, COLOR_TEXT, COLOR_WEAK, SPACE_PAGE } from '../common/Theme';
+import { formatTime, LoadingTip, SectionHeader } from '../common/Widgets';
 import { gotoPlayer } from '../common/Nav';
 
 @Component
 export struct FindView {
   @StorageProp('topSafe') topSafe: number = 0;
   @StorageLink('songs') songs: SongItemType[] = [];
+  @State keyword: string = '';
 
   aboutToAppear(): void {
     getSongList().then((list: SongItemType[]) => {
       this.songs = list;
+    });
+  }
+
+  /** 按歌名 / 歌手本地过滤；空关键字返回全量 */
+  private filteredSongs(): SongItemType[] {
+    const k: string = this.keyword.trim().toLowerCase();
+    if (k.length === 0) {
+      return this.songs;
+    }
+    return this.songs.filter((s: SongItemType) => {
+      return s.title.toLowerCase().includes(k) || s.artist.toLowerCase().includes(k);
     });
   }
 
@@ -82,16 +94,38 @@ export struct FindView {
           .width('100%')
           .margin({ bottom: 12 })
 
-        SearchBar('搜索歌曲、歌手、歌单')
+        Row() {
+          Image($r('app.media.ic_search'))
+            .width(15)
+            .height(15)
+            .fillColor(COLOR_SUB)
+          TextInput({ text: this.keyword, placeholder: '搜索歌曲、歌手、歌单' })
+            .layoutWeight(1)
+            .height(36)
+            .backgroundColor(Color.Transparent)
+            .fontColor(COLOR_TEXT)
+            .placeholderColor(COLOR_SUB)
+            .fontSize(13)
+            .margin({ left: 6 })
+            .onChange((v: string) => {
+              this.keyword = v;
+            })
+        }
+        .width('100%')
+        .height(36)
+        .padding({ left: 12, right: 12 })
+        .borderRadius(18)
+        .backgroundColor(COLOR_CARD)
+        .alignItems(VerticalAlign.Center)
 
         Column() {
           SectionHeader('猜你喜欢')
 
-          if (this.songs.length === 0) {
+          if (this.filteredSongs().length === 0) {
             LoadingTip()
           } else {
             Column() {
-              ForEach(this.songs, (song: SongItemType, index: number) => {
+              ForEach(this.filteredSongs(), (song: SongItemType, index: number) => {
                 this.SongRow(song, index)
               }, (song: SongItemType) => song.id.toString())
             }

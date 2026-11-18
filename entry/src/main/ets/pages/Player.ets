@@ -8,6 +8,8 @@ import { getSongList } from '../api/MusicApi';
 import { COLOR_ACCENT, COLOR_SUB, COLOR_TEXT, COLOR_WEAK } from '../common/Theme';
 import { formatTime } from '../common/Widgets';
 import { goBack } from '../common/Nav';
+import { MusicPlayer } from '../player/MusicPlayer';
+import { hilog } from '@kit.PerformanceAnalysisKit';
 
 @Entry
 @Component
@@ -19,6 +21,9 @@ struct Player {
   @State progress: number = 0;
   @State playing: boolean = true;
   @State liked: boolean = false;
+  /** 真实播放器是否可用（不可用时走计时模拟降级） */
+  @State audioReady: boolean = false;
+  private player: MusicPlayer | null = null;
   private timerId: number = -1;
 
   aboutToAppear(): void {
@@ -26,19 +31,86 @@ struct Player {
     if (raw !== undefined && raw !== null) {
       const params: PlayerParams = raw as PlayerParams;
       this.current = new SongItemType(params.id, params.title, params.artist, params.cover,
-        params.duration > 0 ? params.duration : 240);
+        params.duration > 0 ? params.duration : 240, params.url);
     }
+
+    this.player = new MusicPlayer({
+      onPrepared: (durationSec: number) => {
+        if (durationSec > 0) {
+          this.current.duration = Math.floor(durationSec);
+        }
+        this.player?.play();
+      },
+      onPlaying: () => {
+        this.playing = true;
+      },
+      onPaused: () => {
+        this.playing = false;
+      },
+      onProgress: (positionSec: number, durationSec: number) => {
+        this.progress = Math.floor(positionSec);
+        if (durationSec > 0) {
+          this.current.duration = Math.floor(durationSec);
+        }
+      },
+      onCompleted: () => {
+        this.playing = false;
+        this.progress = this.current.duration;
+      },
+      onError: (message: string) => {
+        this.audioReady = false;
+        this.startFallbackTimer();
+      }
+    });
 
     getSongList().then((list: SongItemType[]) => {
       this.songs = list;
     });
 
+    this.startSong(this.current);
+  }
+
+  aboutToDisappear(): void {
+    this.stopFallbackTimer();
+    if (this.player !== null) {
+      this.player.release();
+      this.player = null;
+    }
+  }
+
+  /** 加载指定歌曲：有可用 url 则走真实播放器，否则启动计时模拟 */
+  private startSong(song: SongItemType): void {
+    this.progress = 0;
+    this.playing = true;
+    this.audioReady = false;
+    this.stopFallbackTimer();
+
+    const url: string = song.url !== undefined ? song.url : '';
+    if (url.length === 0 || this.player === null) {
+      this.startFallbackTimer();
+      return;
+    }
+
+    this.player.load(url).then((ok: boolean) => {
+      if (ok) {
+        this.audioReady = true;
+      } else {
+        this.audioReady = false;
+        this.startFallbackTimer();
+      }
+    });
+  }
+
+  private startFallbackTimer(): void {
+    if (this.timerId !== -1) {
+      return;
+    }
     this.timerId = setInterval(() => {
       this.tick();
     }, 1000);
   }
 
-  aboutToDisappear(): void {
+  private stopFallbackTimer(): void {
     if (this.timerId !== -1) {
       clearInterval(this.timerId);
       this.timerId = -1;
@@ -76,20 +148,31 @@ struct Player {
     }
     const next: number = (index + offset + this.songs.length) % this.songs.length;
     this.current = this.songs[next];
-    this.progress = 0;
-    this.playing = true;
+    this.startSong(this.songs[next]);
+  }
+
+  private onComment(): void {
+    hilog.info(0x0000, 'HeimaMusic', 'comment placeholder: %{public}s', this.current.title);
+  }
+
+  private onList(): void {
+    hilog.info(0x0000, 'HeimaMusic', 'playlist placeholder, songs=%{public}d', this.songs.length);
   }
 
   @Builder
   TopBar() {
     Row() {
-      Image($r('app.media.ic_back'))
-        .width(20)
-        .height(20)
-        .fillColor(COLOR_TEXT)
-        .onClick(() => {
-          goBack();
-        })
+      Stack({ alignContent: Alignment.Center }) {
+        Image($r('app.media.ic_back'))
+          .width(20)
+          .height(20)
+          .fillColor(COLOR_TEXT)
+      }
+      .width(48)
+      .height(48)
+      .onClick(() => {
+        goBack();
+      })
 
       Column() {
         Text('正在播放')
@@ -144,6 +227,14 @@ struct Player {
     .backgroundColor(COLOR_ACCENT)
     .shadow({ radius: 22, color: '#66E4608B', offsetY: 8 })
     .onClick(() => {
+      if (this.audioReady && this.player !== null) {
+        if (this.playing) {
+          this.player.pause();
+        } else {
+          this.player.play();
+        }
+        return;
+      }
       if (this.progress >= this.current.duration) {
         this.progress = 0;
       }
@@ -224,6 +315,9 @@ struct Player {
           .trackThickness(3)
           .onChange((value: number, mode: SliderChangeMode) => {
             this.progress = value;
+            if (this.audioReady) {
+              this.player?.seekTo(value);
+            }
           })
 
         Row() {
@@ -274,6 +368,9 @@ struct Player {
               .margin({ top: 5 })
           }
           .layoutWeight(1)
+          .onClick(() => {
+            this.onComment();
+          })
 
           Column() {
             Image($r('app.media.ic_list'))
@@ -286,6 +383,9 @@ struct Player {
               .margin({ top: 5 })
           }
           .layoutWeight(1)
+          .onClick(() => {
+            this.onList();
+          })
         }
         .width('100%')
         .margin({ top: 30, bottom: this.bottomSafe + 18 })

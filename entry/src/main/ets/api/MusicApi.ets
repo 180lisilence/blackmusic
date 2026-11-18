@@ -191,12 +191,14 @@ function parseSongs(text: string): SongItemType[] {
   for (let i = 0; i < arr.length; i++) {
     const o = asRec(arr[i]);
     const cover: string = str(o, ['cover', 'coverUrl', 'image', 'imageUrl', 'pic', 'img']);
+    const audio: string = str(o, ['url', 'audioUrl', 'src', 'path', 'audio']);
     out.push(new SongItemType(
       num(o, ['id', 'songId'], i + 1),
       str(o, ['title', 'name', 'songName']),
       str(o, ['artist', 'singer', 'artistName', 'author']),
       cover.length > 0 ? cover : $r('app.media.cover_1'),
-      seconds(o, ['duration', 'time', 'length'], 240)
+      seconds(o, ['duration', 'time', 'length'], 240),
+      audio
     ));
   }
   return out;
@@ -213,12 +215,14 @@ function parseMoments(text: string): MomentItemType[] {
     if (songObj !== undefined && songObj !== null) {
       const s = asRec(songObj);
       const sc: string = str(s, ['cover', 'coverUrl', 'image', 'img']);
+      const su: string = str(s, ['url', 'audioUrl', 'src', 'path', 'audio']);
       song = new SongItemType(
         num(s, ['id', 'songId'], i + 1),
         str(s, ['title', 'name', 'songName']),
         str(s, ['artist', 'singer']),
         sc.length > 0 ? sc : $r('app.media.cover_1'),
-        seconds(s, ['duration', 'time'], 240)
+        seconds(s, ['duration', 'time'], 240),
+        su
       );
     }
     out.push(new MomentItemType(

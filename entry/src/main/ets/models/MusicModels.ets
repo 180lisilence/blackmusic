@@ -41,13 +41,16 @@ export class SongItemType {
   artist: string;
   cover: ResourceStr;
   duration: number;
+  /** 音频地址（远程接口下发；本地样本为空字符串） */
+  url: string;
 
-  constructor(id: number, title: string, artist: string, cover: ResourceStr, duration: number) {
+  constructor(id: number, title: string, artist: string, cover: ResourceStr, duration: number, url: string = '') {
     this.id = id;
     this.title = title;
     this.artist = artist;
     this.cover = cover;
     this.duration = duration;
+    this.url = url;
   }
 }
 
@@ -100,12 +103,14 @@ export class PlayerParams {
   artist: string;
   cover: ResourceStr;
   duration: number;
+  url: string;
 
-  constructor(id: number, title: string, artist: string, cover: ResourceStr, duration: number) {
+  constructor(id: number, title: string, artist: string, cover: ResourceStr, duration: number, url: string = '') {
     this.id = id;
     this.title = title;
     this.artist = artist;
     this.cover = cover;
     this.duration = duration;
+    this.url = url;
   }
 }

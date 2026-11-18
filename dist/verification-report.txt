@@ -1,4 +1,4 @@
-PASS  模块文件数量：17 个 .ets
+PASS  模块文件数量：19 个 .ets
 PASS  本地模块导入全部可解析
 PASS  app.media 引用 47 项，全部存在
 PASS  路由页面注册一致：['pages/Splash', 'pages/Index', 'pages/Player', 'pages/Settings']
@@ -13,7 +13,7 @@ PASS  deviceTypes = ['phone', 'tablet']
 PASS  mainElement = EntryAbility
 PASS  权限声明：['ohos.permission.INTERNET', 'ohos.permission.GET_NETWORK_INFO']
 PASS  HAP 内媒体资源 52 项，覆盖全部引用
-PASS  ArkTS 字节码：ets/modules.abc（221476 字节）
+PASS  ArkTS 字节码：ets/modules.abc（237772 字节）
 PASS  资源索引：resources.index
 PASS  图标/封面资源格式完整
 

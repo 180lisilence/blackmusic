@@ -8,6 +8,7 @@ import { getDailyRecommend, getRecommendList, getSongList, getSwiperList } from 
 import { COLOR_ACCENT, COLOR_TEXT, COLOR_WEAK, SPACE_PAGE } from '../common/Theme';
 import { LoadingTip, SearchBar, SectionHeader } from '../common/Widgets';
 import { gotoPlayer } from '../common/Nav';
+import { router } from '@kit.ArkUI';
 
 @Component
 export struct RecommendView {
@@ -42,12 +43,25 @@ export struct RecommendView {
     });
   }
 
+  /**
+   * 按下标取歌播放。
+   * 轮播 / 推荐歌单：卡片 id 与歌曲 id 对齐，下标 = id - 1；
+   * 每日推荐：卡片封面与文案对应下一首（id+1），下标 = id，调用方按各自约定传入。
+   */
   private playByIndex(index: number): void {
     if (this.songs.length === 0) {
       return;
     }
     const song: SongItemType = this.songs[index % this.songs.length];
     gotoPlayer(song);
+  }
+
+  private openSettings(): void {
+    try {
+      router.pushUrl({ url: 'pages/Settings' });
+    } catch (err) {
+      hilog.error(0x0000, 'HeimaMusic', 'openSettings failed: %{public}s', JSON.stringify(err));
+    }
   }
 
   @Builder
@@ -71,11 +85,20 @@ export struct RecommendView {
           .width(20)
           .height(20)
           .fillColor(COLOR_ACCENT)
-        Image($r('app.media.ic_setting'))
-          .width(20)
-          .height(20)
-          .fillColor(COLOR_TEXT)
-          .margin({ left: 14 })
+        Row() {
+          Image($r('app.media.ic_setting'))
+            .width(20)
+            .height(20)
+            .fillColor(COLOR_TEXT)
+        }
+        .width(36)
+        .height(36)
+        .margin({ left: 14 })
+        .alignItems(VerticalAlign.Center)
+        .justifyContent(FlexAlign.Center)
+        .onClick(() => {
+          this.openSettings();
+        })
       }
       .width('100%')
       .alignItems(VerticalAlign.Center)
@@ -138,7 +161,7 @@ export struct RecommendView {
           .layoutWeight(1)
           .alignItems(HorizontalAlign.Start)
           .onClick(() => {
-            this.playByIndex(item.id - 1);
+            this.playByIndex(item.id);
           })
         }, (item: DailyRecommendType) => item.id.toString())
       }

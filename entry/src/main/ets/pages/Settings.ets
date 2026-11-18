@@ -1,8 +1,8 @@
 /**
  * 服务器设置页：填地址 → 自检 → 保存。地址持久化到 Preferences，页面立即生效。
  */
-import { router } from '@kit.ArkUI';
 import { common } from '@kit.AbilityKit';
+import { goBack } from '../common/Nav';
 import { getBaseUrl, loadBaseUrl, saveBaseUrl, DEFAULT_BASE_URL } from '../common/AppConfig';
 import { probeServer } from '../api/MusicApi';
 import { COLOR_ACCENT, COLOR_CARD, COLOR_SUB, COLOR_TEXT, COLOR_WEAK } from '../common/Theme';
@@ -46,13 +46,19 @@ struct Settings {
   build() {
     Column() {
       Row() {
-        Image($r('app.media.ic_back'))
-          .width(20)
-          .height(20)
-          .fillColor(COLOR_TEXT)
-          .onClick(() => {
-            router.back();
-          })
+        Row() {
+          Image($r('app.media.ic_back'))
+            .width(20)
+            .height(20)
+            .fillColor(COLOR_TEXT)
+        }
+        .width(40)
+        .height(40)
+        .alignItems(VerticalAlign.Center)
+        .justifyContent(FlexAlign.Center)
+        .onClick(() => {
+          goBack();
+        })
         Text('服务器设置')
           .fontSize(18)
           .fontWeight(FontWeight.Bold)

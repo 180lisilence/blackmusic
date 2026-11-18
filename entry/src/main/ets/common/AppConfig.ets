@@ -4,7 +4,7 @@
 import { preferences } from '@kit.ArkData';
 import { common } from '@kit.AbilityKit';
 
-export const DEFAULT_BASE_URL: string = 'http://example.com/music';
+export const DEFAULT_BASE_URL: string = 'http://206.187.214.190/music';
 export const PREF_NAME: string = 'app_config';
 export const PREF_KEY_BASE_URL: string = 'baseUrl';
 
