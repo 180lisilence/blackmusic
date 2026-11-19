@@ -139,7 +139,7 @@ entry/src/main/resources/rawfile/
 ## 9. 分支与目录约定
 
 - 本仓库 blackmusic 为客户端主线，`main` 分支；
-- 纯内置版在本目录 `E:\2026music-local` 的 `main` 分支上开发；
+- 纯内置版在本目录 `E:\workaddress\2026.11.18-2026.11.20\2026music-local` 的 `main` 分支上开发；
 - 副本已排除：`oh_modules`、`build`、`entry/build`、`.hvigor`、`.appanalyzer`、`backup`、`app/DCIM`、`*.hap/*.apk/*.zip`；
 - 本地版是否推送远端、何时推送，等明确指令后再执行（沿用改动前时间戳备份习惯）。
 
